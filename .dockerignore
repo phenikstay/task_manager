@@ -1,0 +1,88 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.tox
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Virtual environment
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Documentation
+README.md
+*.md
+docs/
+
+# Development files
+.editorconfig
+.pre-commit-config.yaml
+
+# Database files (не нужны в образе)
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Testing (можно исключить из продакшн образа)
+tests/
+.pytest_cache/
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Claude specific
+.claude/
+CLAUDE.md
+
+# Misc
+*.bak
+*.swp
+.env.local
+.env.*.local

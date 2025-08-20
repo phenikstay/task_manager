@@ -1,0 +1,74 @@
+
+services:
+  task-manager:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: task-manager-api
+    ports:
+      - "8080:8000"
+    environment:
+      - PYTHONPATH=/app
+      - DATABASE_URL=sqlite+aiosqlite:///./data/tasks.db
+    volumes:
+      # Постоянное хранение базы данных
+      - task_data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health', timeout=10)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - task-network
+
+  # Опциональный сервис для разработки с hot-reload
+  task-manager-dev:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: task-manager-dev
+    ports:
+      - "8001:8000"
+    environment:
+      - PYTHONPATH=/app
+      - DATABASE_URL=sqlite+aiosqlite:///./data/tasks_dev.db
+      - DEBUG=true
+    volumes:
+      # Монтирование исходного кода для разработки
+      - ./app:/app/app:ro
+      - task_data_dev:/app/data
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    restart: unless-stopped
+    networks:
+      - task-network
+    profiles:
+      - dev
+
+  # Nginx для продакшена (опционально)
+  nginx:
+    image: nginx:alpine
+    container_name: task-manager-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - task-manager
+    restart: unless-stopped
+    networks:
+      - task-network
+    profiles:
+      - production
+
+volumes:
+  task_data:
+    driver: local
+  task_data_dev:
+    driver: local
+
+networks:
+  task-network:
+    driver: bridge
